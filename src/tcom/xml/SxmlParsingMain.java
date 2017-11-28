@@ -18,7 +18,7 @@ public class SxmlParsingMain {
                         System.exit(0);
                     }
                     parser.analizar(args[0]);			
-                    System.out.println("El archivo" + args[0] + "esta sintacticamente correcto");System.out.flush();
+                    System.out.println("El archivo " + args[0] + " esta sintacticamente correcto ");
 		} catch (XmlParsingException e) {
 			System.out.println(e.getMessage());
 		}

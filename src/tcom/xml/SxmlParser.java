@@ -15,7 +15,8 @@ import org.antlr.runtime.ANTLRInputStream;
 
 /**
  * Parser para el lenguaje Sxml
- * @author rlopez
+ * @author DiegoBorrero
+ * @author JeffersonCastañeda
  *
  */
 public class SxmlParser extends BasicParser{
@@ -57,17 +58,72 @@ public class SxmlParser extends BasicParser{
 	 * @throws XmlParsingException
 	 */
 	private void parse() throws XmlParsingException {
-		
-		//Modificar segun su gramatica
-		
 		sigToken();
-		
-		while (token.getType()!=EOF) {
-			System.out.println(tokenName(token.getType())+" "+token.getText());
-			sigToken();
-		}
-		
+		PP();
+		expect(EOF);		
 	}
 
+	/**
+	 * Analiza las producciones principales
+	 * @throws XmlParsingException
+	 */
+	
+	private void PP() throws XmlParsingException{
+		expect(ANGI);
+		expect(ID);
+		PT();
+		switch(token.getType()) {
+			case ANGD:
+				sigToken();
+				PL();
+				expect(SLASH);
+				expect(ID);
+				break;
+			case SLASH:
+				sigToken();
+				break;
+		}
+		expect(ANGD);		
+	}
+	
+	/**
+	 * Analiza las producciones que son atributos
+	 * @throws XmlParsingException 
+	 */
+	private void PT() throws XmlParsingException{
+		while(token.getType()==ID) {
+			sigToken();
+			expect(EQ);
+			expect(STRING);
+		}
+	}
+	
+	/**
+	 * Analiza las producciones que generan cualquier marca
+	 * @throws XmlParsingException 
+	 */
+	private void PL() throws XmlParsingException{
+		while(token.getType()==ANGI) {
+			sigToken();
+			if(token.getType()==ID) {
+				expect(ID);
+			}else {
+				break;
+			}
+			PT();
+			switch(token.getType()) {
+				case ANGD:
+					sigToken();
+					PL();
+					expect(SLASH);
+					expect(ID);
+					break;
+				case SLASH:
+					sigToken();
+					break;
+			}
+			expect(ANGD);
+		}
+	}
 
 }
